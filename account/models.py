@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User, AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils import timezone
-
+import uuid
 class UserAccountManager(BaseUserManager):
     def create_user(self, email, firstname, lastname, password=None, role=None):
         if not email:
@@ -72,6 +72,9 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
     
+    def fullname(self):
+        return f"{self.firstname} {self.lastname}"
+    
 
 
 class Customer(models.Model):
@@ -140,3 +143,26 @@ class TrainerProfile(models.Model):
 
     def __str__(self):
         return f"Profile of {self.trainer.user.firstname} {self.trainer.user.lastname}"
+
+
+
+
+
+class Booking(models.Model):
+    AVAILABLE_CHOICES = (
+        ('virtual', 'VIRTUAL'),
+        ('in-person', 'IN-PERSON')
+       
+    )
+    customer = models.ForeignKey(Customer, related_name="bookings", on_delete=models.CASCADE)
+    trainer = models.ForeignKey(Trainer, related_name="sessions", on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    session_type = models.CharField(choices=AVAILABLE_CHOICES, blank=True, max_length=20)
+    start_time = models.DateTimeField()
+    session_started = models.BooleanField(default=False)
+    meeting_id = models.CharField(max_length=255, unique=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.meeting_id:
+            self.meeting_id = str(uuid.uuid4())  # unique Jitsi room name
+        super().save(*args, **kwargs)

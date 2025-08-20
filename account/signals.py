@@ -6,3 +6,8 @@ from .models import Trainer, TrainerProfile
 def create_trainer_profile(sender, instance, created, **kwargs):
     if created:
         TrainerProfile.objects.create(trainer=instance)
+
+
+
+
+

@@ -5,4 +5,5 @@ from .models import *
 admin.site.register(UserAccount)
 admin.site.register(Customer)
 admin.site.register(Trainer)
+admin.site.register(TrainerProfile)
 admin.site.register(Booking)

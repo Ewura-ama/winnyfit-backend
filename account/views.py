@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, generics
 from .serializers import TrainerRegistrationSerializer, CustomerCreateSerializer, UserAccountSerializer
-from .models import Customer, Booking, Trainer
+from .models import Customer, Booking, Trainer, TrainerProfile
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authtoken.models import Token
@@ -85,15 +85,18 @@ class UserDetailView(APIView):
 @api_view(["GET"])
 @permission_classes([AllowAny])  # or IsAuthenticated if needed
 def trainer_list(request):
-    trainers = Trainer.objects.all()
+    trainers = TrainerProfile.objects.all()
     
     data = []
-    for trainer in trainers:
+    for ind in trainers:
         data.append({
-            "id": trainer.id,
-            "name": f"{trainer.user.firstname} {trainer.user.lastname}",  # comes from User model
-            "specialization": trainer.specialization,
-            "availableTimes": ["09:00 AM", "10:00 AM", "2:00 PM"],  # replace with real availability
+            "id": ind.id,
+            "name": f"{ind.trainer.user.firstname} {ind.trainer.user.lastname}",  # comes from User model
+            "specialization": ind.trainer.specialization,
+            "phonenumber": ind.trainer.contact_number,
+            "instagram": ind.instagram,
+            "twitter": ind.twitter,
+            "availableTimes": ["05:00 AM", "10:00 AM", "7:00 PM"],  # replace with real availability
         })
     return Response(data)
 

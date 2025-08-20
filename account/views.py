@@ -80,6 +80,25 @@ class UserDetailView(APIView):
         user = request.user
         serializer = UserAccountSerializer(user)
         return Response(serializer.data)
+
+class CustomerDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            customer = Customer.objects.get(user=request.user)
+        except Customer.DoesNotExist:
+            return Response({"detail": "Customer profile not found"}, status=404)
+
+        data = {
+            "firstname": customer.user.firstname,
+            "lastname": customer.user.lastname,
+            "email": customer.user.email,
+            "contact_number": customer.contact_number,
+        }
+
+        return Response(data)
+
     
 #Trainers
 @api_view(["GET"])

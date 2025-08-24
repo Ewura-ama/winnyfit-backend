@@ -24,13 +24,13 @@ if os.path.isfile(dotenv_file):
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-hfhf8_d@%!lna1a@)i3v01)&6r-03nf-=zq(a!-07c9hfgpr-e'
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
-CSRF_TRUSTED_ORIGINS = ["http://localhost:8001"]
+ALLOWED_HOSTS = ["localhost", "winnyfit.vercel.app"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8001", "https://winnyfit.vercel.app"]
 
 # Application definition
 
@@ -47,10 +47,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'account',
+    'whitenoise'
 ]
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -62,7 +64,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8001",
-    # "http://localhost:5173",
+    "https://winnyfit.vercel.app",
     # "https://dermacare-backend.up.railway.app",
     # "https://dermacare.up.railway.app"
 ]
@@ -117,16 +119,16 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
 }
 
-# DATABASES['default'] = dj_database_url.config(default=os.getenv('DATABASE_URL'))
-# DATABASES['default']['OPTIONS'] = {
-#     'sslmode': 'require',
-# }
+DATABASES['default'] = dj_database_url.config(default=os.getenv('DATABASE_URL'))
+DATABASES['default']['OPTIONS'] = {
+    'sslmode': 'require',
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

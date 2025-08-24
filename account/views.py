@@ -57,9 +57,62 @@ class SignInView(ObtainAuthToken):
             'token': token.key,
             'email': user.email,
             'name': user.firstname,
-            'role': user.role
+            'role': user.role,
+            
            
         })
+
+class CustomerUpdateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        firstname = request.data.get('firstname')
+        lastname = request.data.get('lastname')
+        avatar = request.FILES.get('avatar')
+
+        try:
+            customer = Customer.objects.get(user=request.user)
+            user = customer.user
+
+            if firstname:
+                user.firstname = firstname
+            if lastname:
+                user.lastname = lastname
+            if avatar:
+                user.avatar = avatar
+
+            user.save()
+
+            serializer = UserAccountSerializer(user, context={'request': request})
+           
+            return Response(serializer.data)
+
+        except Customer.DoesNotExist:
+            return Response({"detail": "Customer profile not found"}, status=404)
+
+
+class CustomerPasswordUpdateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        password = request.data.get('new_password')
+        confirm_password = request.data.get('confirm_password')
+
+        if password != confirm_password:
+            return Response({"detail": "Passwords do not match"}, status=400)
+
+        try:
+            customer = Customer.objects.get(user=request.user)
+            user = customer.user
+            user.set_password(password)  # ✅ hashes the password
+            user.save()
+
+            serializer = UserAccountSerializer(user, context={'request': request})
+            return Response(serializer.data, status=200)
+
+        except Customer.DoesNotExist:
+            return Response({"detail": "Customer profile not found"}, status=404)
+
 
 class SignOutView(APIView):
     permission_classes = [IsAuthenticated]
@@ -78,7 +131,8 @@ class UserDetailView(APIView):
 
     def get(self, request):
         user = request.user
-        serializer = UserAccountSerializer(user)
+        serializer = UserAccountSerializer(user, context={'request': request})
+
         return Response(serializer.data)
 
 class CustomerDetailView(APIView):
@@ -87,6 +141,7 @@ class CustomerDetailView(APIView):
     def get(self, request):
         try:
             customer = Customer.objects.get(user=request.user)
+           
         except Customer.DoesNotExist:
             return Response({"detail": "Customer profile not found"}, status=404)
 
@@ -233,7 +288,7 @@ def past_sessions(request):
             "session_started": booking.session_started,
         })
 
-    print(data)
+   
     return Response(data)
 
 @api_view(["GET"])

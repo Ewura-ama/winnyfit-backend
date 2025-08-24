@@ -51,6 +51,8 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     password = models.CharField(max_length=255)
     role = models.CharField(max_length=50, choices=ROLE_CHOICES, default='customer')
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
@@ -81,6 +83,7 @@ class Customer(models.Model):
     user = models.OneToOneField(UserAccount, on_delete=models.CASCADE, related_name='customer_profile')
     contact_number = models.CharField(db_column='contactnumber', unique=True, max_length=20)
     reg_date = models.DateTimeField(default=timezone.now)
+    
     class Meta:
         managed = True
         db_table = 'customers'

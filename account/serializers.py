@@ -12,9 +12,10 @@ class TrainerProfileSerializer(serializers.ModelSerializer):
 
 class UserAccountSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    avatar = serializers.SerializerMethodField()
     class Meta:
         model = UserAccount
-        fields = ['id', 'firstname', 'lastname', 'password', 'email', 'role', 'is_active', 'is_staff']
+        fields = ['id', 'firstname', 'lastname', 'password', 'email', 'role', 'avatar', 'is_active', 'is_staff']
         
     def create(self, validated_data):
         password = validated_data.pop('password')
@@ -22,6 +23,28 @@ class UserAccountSerializer(serializers.ModelSerializer):
         user.set_password(password)  # hash password before saving
         user.save()
         return user
+    
+    # def get_avatar(self, obj):
+    #     if obj.avatar:
+    #         request = self.context.get('request')
+    #         if request is not None:
+    #             return request.build_absolute_uri(obj.avatar.url)
+    #         return obj.avatar.url
+    #     return None
+
+    def get_avatar(self, obj):
+        if obj.avatar:
+            try:
+                request = self.context.get('request', None)
+                url = obj.avatar.url
+                if request is not None:
+                    return request.build_absolute_uri(url)
+                return url  # fallback to relative if no request
+            except Exception:
+                return None
+        return None
+
+
 
 class CustomerCreateSerializer(serializers.ModelSerializer):
     user = UserAccountSerializer()

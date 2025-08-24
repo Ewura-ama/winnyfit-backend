@@ -1,9 +1,13 @@
 from django.urls import path
 from .views import *
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('trainers/register/', TrainerRegistrationView.as_view(), name='trainer-register'),
     path('customers/register/', CustomerRegisterView.as_view(), name='customer-register'),
+    path('customers/update/', CustomerUpdateView.as_view(), name='customer-update'),
+    path('customers/password-update/', CustomerPasswordUpdateView.as_view(), name='customer-password-update'),
     path('me/', UserDetailView.as_view(), name='user-detail'),
     path('customer/fetch/', CustomerDetailView.as_view(), name="customer-detail"),
     path('signin/', SignInView.as_view(), name='signin'), 
@@ -16,3 +20,6 @@ urlpatterns = [
     path('bookings/trainer/past/', past_trainer_sessions, name="past-trainer-sessions"),
     path('bookings/<int:booking_id>/start/', start_session, name='start-session'),
 ]
+
+if settings.DEBUG:  # only serve locally in dev
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

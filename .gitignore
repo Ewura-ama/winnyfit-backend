@@ -1,2 +1,21 @@
 venv
 .env
+
+
+curl -X POST \
+  http://127.0.0.1:8000/api/trainers/register/ \
+ -H "Content-Type: application/json" \
+  -H "Authorization: Token edfb644556625660fdf1f63abde35a18bfe8d3ce" \
+  -d '{
+    "email": "sam@example.com",
+  "password": "testing321",
+  "trainer": {
+    "firstname": "Samuel",
+    "lastname": "Darko",
+    "role": "trainer",
+    "contact_number": "0244123456",
+    "address": "Plot 35 Block A"
+  }
+}'
+
+

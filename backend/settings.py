@@ -29,8 +29,8 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "winnyfit.vercel.app", "winnyfit.up.railway.app"]
-CSRF_TRUSTED_ORIGINS = ["http://localhost:8001", "https://winnyfit.vercel.app", "https://winnyfit.up.railway.app"]
+ALLOWED_HOSTS = ["localhost", "winnyfit.vercel.app", "winnyfit.up.railway.app", "winnfit-backend.up.railway.app"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8001", "https://winnyfit.vercel.app", "https://winnyfit.up.railway.app", "https://winnyfit-backend.up.railway.app"]
 
 # Application definition
 
@@ -66,6 +66,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8001",
     "https://winnyfit.vercel.app",
     "https://winnyfit.up.railway.app",
+    "https://winnyfit-backend.up.railway.app",
     # "https://dermacare.up.railway.app"
 ]
 
